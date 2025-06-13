@@ -1,0 +1,8 @@
+{
+    "liveServer.settings.port": 5501,
+    "json.schemas": [],
+    "javascript.suggest.alwaysAllWords": true,
+
+    // Complete functions with their parameter signature.
+    "javascript.suggest.useCodeSnippetsOnMethodSuggest": true
+}

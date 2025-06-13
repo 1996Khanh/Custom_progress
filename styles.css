@@ -1,0 +1,89 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.player {
+    max-width: 90%;
+    margin: 30px auto;
+}
+
+.player .play-btn {
+    text-align: center;
+    font-size: 30px;
+    color: #53d4ff;
+}
+
+.player .play-inner {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+.player .play-inner .progress-bar {
+    position: relative;
+    cursor: pointer;
+    background: #ccc;
+    height: 5px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.player .play-inner .progress-bar:hover {
+    height: 10px;
+}
+
+.player .play-inner .progress-bar .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    border-radius: 4px;
+    background: #53d4ff;
+}
+
+.player .progress .span {
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    display: block;
+    translate: 50% -50%;
+    border: 5px solid #53d4ff;
+}
+
+.player .play-inner .progress-bar .hover-timer {
+    display: none;
+    position: absolute;
+    top: -28px;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 45px;
+    height: 20px;
+    background-color: #53d4ff;
+    color: #fff;
+    border-radius: 3px;
+    z-index: 1;
+}
+
+.player .play-inner .progress-bar .hover-timer::before {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    translate: -50% 0;
+    rotate: 45deg;
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #53d4ff;
+    z-index: -1;
+}
