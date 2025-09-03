@@ -13,12 +13,24 @@ var isDragging = false;
 var audio = $(".audio");
 var durationEL = progressBar.nextElementSibling;
 var currentTimeEL = progressBar.previousElementSibling;
+
 var playBtn = $(".play-btn");
 var currentTime = 0;
 var wasPlaying = false;
 
 var pauseBtnHtml = `<i class="fa-solid fa-pause"></i>`;
 var playBtnHtml = `<i class="fa-solid fa-play"></i>`;
+var getTime = function (second) {
+    if (isNaN(second)) return "00:00";
+    var mins = Math.floor(second / 60);
+    second = Math.floor(second % 60);
+    return `${mins < 10 ? "0" + mins : mins}:${second < 10 ? "0" + second : second}`;
+};
+
+audio.load();
+audio.addEventListener("loadedmetadata", function () {
+    durationEL.innerText = getTime(audio.duration);
+});
 
 playBtn.addEventListener("click", function () {
     if (audio.paused) {
@@ -30,15 +42,9 @@ playBtn.addEventListener("click", function () {
     }
 });
 
-var getTime = function (second) {
-    if (isNaN(second)) return "00:00";
-    var mins = Math.floor(second / 60);
-    second = Math.floor(second % 60);
-    return `${mins < 10 ? "0" + mins : mins}:${second < 10 ? "0" + second : second}`;
-};
-
-audio.addEventListener("loadedmetadata", function () {
-    durationEL.innerText = getTime(audio.duration);
+audio.addEventListener("error", function () {
+    console.error("Audio error:", audio.error);
+    durationEL.innerText = "00:00";
 });
 
 audio.addEventListener("timeupdate", function (e) {
@@ -142,4 +148,203 @@ window.addEventListener("resize", function () {
 
 progressSpan.addEventListener("mousemove", function (e) {
     e.stopPropagation();
+});
+
+var karaoke = document.querySelector(".karaoke");
+var karaokeInner = document.querySelector(".karaoke-inner");
+var closeBtn = karaoke.querySelector(".close");
+var karaokePlay = karaoke.querySelector(".play");
+
+var player = document.querySelector(".player");
+
+karaokePlay.addEventListener("click", function () {
+    karaokeInner.classList.add("show");
+    player.classList.add("showPlay");
+});
+
+closeBtn.addEventListener("click", function () {
+    karaokeInner.classList.remove("show");
+    player.classList.remove("showPlay");
+});
+
+// var requestId, currentIndex;
+
+// var karaokeContent = document.querySelector(".karaoke-content");
+
+// var handleKaraoke = function () {
+//     var currentTime = audio.currentTime * 1000;
+
+//     handleColor(currentTime); //Xử lý tô màu từng từ khi hát Karaoke
+
+//     var index = lyric.findIndex(function (sentence) {
+//         var words = sentence.words;
+//         return currentTime >= words[0].startTime && currentTime <= words[words.length - 1].endTime;
+//     });
+
+//     if (index !== -1 && index !== currentIndex) {
+//         if (index === 0) {
+//             var sentenceHtml = `
+//        <p>${getSentence(0)}</p>
+//        <p>${getSentence(1)}</p>
+//        `;
+//             karaokeContent.innerHTML = sentenceHtml;
+//         } else {
+//             //Thực hiện next câu dạng so le
+//             setTimeout(function () {
+//                 nextSentence(index);
+//             }, 500);
+//         }
+
+//         currentIndex = index;
+//     }
+
+//     requestId = requestAnimationFrame(handleKaraoke);
+// };
+
+// var getSentence = function (index) {
+//     return lyric[index].words
+//         .map(function (word) {
+//             return `<span class="word" data-start-time="${word.startTime}" data-end-time="${word.endTime}">${word.data}<span>${word.data}</span></span>`;
+//         })
+//         .join(" ");
+// };
+
+// var nextSentence = function (index) {
+//     var sentenceEl = karaokeContent.children;
+//     var showSentence = function (lineIndex) {
+//         sentenceEl[lineIndex].style.transition = `opacity 0.4s linear`;
+
+//         sentenceEl[lineIndex].style.opacity = 0;
+
+//         setTimeout(function () {
+//             sentenceEl[lineIndex].innerHTML = getSentence(index + 1);
+//             sentenceEl[lineIndex].style.opacity = 1;
+//         }, 350);
+//     };
+//     if (index % 2 !== 0) {
+//         showSentence(0);
+//     } else {
+//         showSentence(1);
+//     }
+// };
+
+// var handleColor = function (currentTime) {
+//     var wordList = karaokeContent.querySelectorAll(".word");
+//     if (wordList.length) {
+//         wordList.forEach(function (wordItem, index) {
+//             //Lấy startTime, endTime của từng từ trên giao diện
+//             var startTime = wordItem.dataset.startTime;
+//             var endTime = wordItem.dataset.endTime;
+
+//             if (currentTime > startTime && currentTime < endTime) {
+//                 //Tính tỉ lệ phần trăm từ currentTime so với toàn bộ thời gian của 1 từ
+//                 var rate = ((currentTime - startTime) / (endTime - startTime)) * 100;
+
+//                 wordItem.children[0].style.width = `${rate}%`;
+//             }
+
+//             if (currentTime >= endTime) {
+//                 wordItem.children[0].style.width = `100%`;
+//             }
+//         });
+//     }
+// };
+
+// audio.addEventListener("play", function () {
+//     requestId = requestAnimationFrame(handleKaraoke);
+// });
+
+// audio.addEventListener("pause", function () {
+//     cancelAnimationFrame(requestId);
+// });
+
+var requestId, currentIndex;
+
+var karaokeContent = document.querySelector(".karaoke-content");
+
+console.log(lyric);
+
+var handleKaraoke = function () {
+    var currentTime = audio.currentTime * 1000;
+
+    handleColor(currentTime);
+
+    var index = lyric.findIndex(function (sentence) {
+        var words = sentence.words;
+        return currentTime >= words[0].startTime && currentTime <= words[words.length - 1].endTime;
+    });
+
+    if (index !== -1 && index !== currentIndex) {
+        if (index === 0) {
+            var sentenceHtml = `
+            <p>${getSentence(0)}</p>
+            <p>${getSentence(1)}</p>
+            `;
+            karaokeContent.innerHTML = sentenceHtml;
+        } else {
+            setTimeout(function () {
+                nextSentence(index);
+            }, 500);
+        }
+        currentIndex = index;
+    }
+    requestId = requestAnimationFrame(handleKaraoke);
+};
+
+var getSentence = function (index) {
+    return lyric[index].words
+        .map(function (word) {
+            return `<span class="word" data-start-time="${word.startTime}" data-end-time="${word.endTime}">${word.data}<span>${word.data}</span></span>`;
+        })
+        .join(" ");
+};
+
+var nextSentence = function (index) {
+    var sentenceEl = karaokeContent.children;
+    var showSentence = function (lineIndex) {
+        sentenceEl[lineIndex].style.transition = `opacity 0.4s linear`;
+
+        sentenceEl[lineIndex].style.opacity = 0;
+
+        setTimeout(function () {
+            sentenceEl[lineIndex].innerHTML = getSentence(index + 1);
+            sentenceEl[lineIndex].style.opacity = 1;
+        }, 400);
+    };
+
+    if (index % 2 !== 0) {
+        showSentence(0);
+    } else {
+        showSentence(1);
+    }
+};
+
+var handleColor = function (currentTime) {
+    var wordList = karaokeContent.querySelectorAll(".word");
+    if (wordList.length) {
+        wordList.forEach(function (wordItem, index) {
+            //Lấy startTime, endTime của từng từ trên giao diện
+            var startTime = wordItem.dataset.startTime;
+            var endTime = wordItem.dataset.endTime;
+
+            if (currentTime > startTime && currentTime < endTime) {
+                //Tính tỉ lệ phần trăm từ currentTime so với toàn bộ thời gian của 1 từ
+                var rate = ((currentTime - startTime) / (endTime - startTime)) * 100;
+
+                wordItem.children[0].style.width = `${rate}%`;
+            }
+
+            if (currentTime >= endTime) {
+                wordItem.children[0].style.overflow = "initial";
+            }
+        });
+    }
+};
+
+audio.addEventListener("play", function () {
+    requestId = requestAnimationFrame(handleKaraoke);
+});
+
+audio.addEventListener("pause", function () {
+    cancelAnimationFrame(requestId);
 });

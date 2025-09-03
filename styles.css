@@ -9,6 +9,14 @@
     margin: 30px auto;
 }
 
+.player.showPlay {
+    z-index: 101;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+}
+
 .player .play-btn {
     text-align: center;
     font-size: 30px;
@@ -86,4 +94,70 @@
     height: 10px;
     background-color: #53d4ff;
     z-index: -1;
+}
+
+.karaoke {
+    padding: 15px;
+}
+
+.karaoke .play {
+    background-color: #53d4ff;
+    color: #fff;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    border: none;
+}
+
+.karaoke-inner {
+    background-color: green;
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: bold;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    padding: 80px;
+    top: 100%;
+    transition: top 0.4s ease;
+}
+
+.karaoke-inner.show {
+    top: 0;
+}
+
+.karaoke-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.karaoke .close {
+    cursor: pointer;
+}
+
+.karaoke-content {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.karaoke-content p {
+    margin: 10px 0;
+}
+
+.karaoke .karaoke-content span.word {
+    position: relative;
+}
+
+.karaoke .karaoke-content span.word span {
+    position: absolute;
+    left: 0;
+    color: black;
+    overflow: hidden;
+    width: 0;
 }
